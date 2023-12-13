@@ -1,0 +1,83 @@
+---
+title: "Homework 2"
+author: "Aleksei Baklanov"
+date: "10 12 2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Task 1
+
+### First of all, I made a dataset.
+
+```{r database, echo=FALSE, results='asis'}
+library(tidyverse)
+library(knitr)
+freq_dict <- read.delim('https://raw.githubusercontent.com/agricolamz/DS_for_DH/master/data/freq_dict_2011.csv', encoding = "UTF-8")
+
+letters <- c("а","б","в","г","д","е","ё","ж","з","и","й","к","л","м","н","о","п","р","с","т","у","ф","х","ц","ч","ш","щ","ъ","ы","ь","э","ю","я")
+
+letters_count <- c()
+
+words <- c(freq_dict$lemma)
+words_word <- paste(words, collapse='')
+words_word <- tolower(words_word)
+
+for (x in letters) {
+  freq_dict_letter<- str_count(words_word, x)
+  letters_count <- append(letters_count, freq_dict_letter)
+}
+
+
+df_letters <- data.frame("letters" = letters, "number" = letters_count)
+
+kable(df_letters, caption = "letters' frequency")
+
+```
+
+
+## Including Plots
+
+
+```{r plot_letters, echo=FALSE}
+
+ggplot(data = df_letters) + 
+  geom_col(mapping = aes(x = letters_count, y = reorder(letters, letters_count)))+
+  labs(caption = "Данные из [Ляшевская, Шаров 2011]", 
+       x = "Количество букв в словаре", 
+       y = "Буквы")
+
+```
+
+## Task 2: I did almost nothing...
+
+```{r cities_US_data, echo=FALSE}
+temp_dict <- read.csv("https://raw.githubusercontent.com/agricolamz/DS_for_DH/master/data/us_city_average_temperature.csv")
+kable(temp_dict)
+temp_dict_valueonly = subset(temp_dict, select = c(3:26))
+all_temp_min <- min(temp_dict_valueonly)
+all_temp_с <- 5/9*(all_temp_min-32)
+all_temp_с
+
+```
+## Task 3: I could only work with the dataset...
+
+```{r eyes, echo=FALSE}
+
+eye_dict <- read.csv("https://raw.githubusercontent.com/Whereamiactually/R/main/Couple%20Eye%20Colors.csv")
+
+eye_dict_filtred <- subset(eye_dict, self_male != partner_female)
+
+eye_dict_filtred$eyes_total <- ifelse(eye_dict_filtred$self_male == "blue" & eye_dict_filtred$partner_female == "brown", "bl_br", NA) 
+eye_dict_filtred$eyes_total <- ifelse(eye_dict_filtred$self_male == "blue" & eye_dict_filtred$partner_female == "green", "bl_gr", eye_dict_filtred$eyes_total)
+eye_dict_filtred$eyes_total <- ifelse(eye_dict_filtred$self_male == "brown" & eye_dict_filtred$partner_female == "green", "br_gr", eye_dict_filtred$eyes_total) 
+eye_dict_filtred$eyes_total <- ifelse(eye_dict_filtred$self_male == "brown" & eye_dict_filtred$partner_female == "blue", "br_bl", eye_dict_filtred$eyes_total)
+eye_dict_filtred$eyes_total <- ifelse(eye_dict_filtred$self_male == "green" & eye_dict_filtred$partner_female == "brown", "gr_br",eye_dict_filtred$eyes_total) 
+eye_dict_filtred$eyes_total <- ifelse(eye_dict_filtred$self_male == "green" & eye_dict_filtred$partner_female == "blue", "gr_bl", eye_dict_filtred$eyes_total)
+kable(eye_dict_filtred)
+
+```
+
